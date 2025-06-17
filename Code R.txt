@@ -1,0 +1,354 @@
+# Installer les packages (si ce n'est pas déjà fait)
+install.packages("tidyverse")  # Pour la manipulation des données
+install.packages("readr")      # Pour lire les fichiers CSV
+install.packages("ggplot2")    # Pour les visualisations
+install.packages("dplyr")      # Pour le traitement des données
+install.packages("summarytools") # Pour les statistiques descriptives
+
+# Charger les packages
+library(tidyverse)
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(summarytools)
+
+superstore <- read_csv("Superstore.csv")
+
+glimpse(superstore)  # Aperçu rapide
+head(superstore)     # Voir les premières lignes
+
+colSums(is.na(superstore))
+
+superstore <- superstore %>%
+  mutate(`Order Date` = as.Date(`Order Date`, format = "%m/%d/%Y"))
+
+sum(duplicated(superstore))
+
+summary(superstore$Sales)  # Résumé des ventes
+summary(superstore$Profit) # Résumé des profits
+
+superstore %>%
+  group_by(Category) %>%
+  summarise(Total_Sales = sum(Sales), Avg_Profit = mean(Profit))
+
+ggplot(superstore, aes(x = Category, y = Profit)) + geom_boxplot()
+
+aov_result <- aov(Profit ~ Category, data = superstore)
+summary(aov_result)
+
+ggplot(superstore, aes(x = Category, y = Profit, fill = Category)) + 
+  geom_bar(stat = "summary", fun = "mean")
+
+cor(superstore[, c("Sales", "Profit", "Quantity")])
+
+ggplot(superstore, aes(x = Sales, y = Profit)) + geom_point() + geom_smooth()
+
+superstore_monthly <- superstore %>%
+  mutate(Month = format(`Order Date`, "%Y-%m")) %>%
+  group_by(Month) %>%
+  summarise(Total_Sales = sum(Sales))
+
+
+ggplot(superstore_monthly, aes(x = Month, y = Total_Sales, group = 1)) + 
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90))
+
+# Corriger les types si nécessaire 
+  superstore <- superstore %>%
+  mutate(across(c(Segment, Category, Sub.Category, Region), as.factor))
+
+ # Afficher la structure détaillée
+   str(superstore)
+
+# Corriger les types si nécessaire
+  superstore <- superstore %>%
+  mutate(across(c(Segment, Category, Sub-Category, Region), as.factor))
+
+install.packages("summarytools")
+
+superstore <- read_csv("Superstore.csv", locale = locale(encoding = "UTF-8"))
+
+# Extraire des composantes temporelles
+> superstore <- superstore %>%
++     mutate(Order_Year = year(`Order Date`),
++            Order_Month = month(`Order Date`),
++            Order_Day = day(`Order Date`))
+> # Vérification de la structure
+> glimpse(superstore)
+
+# Vérification des dates
+> summary(superstore$`Order Date`)
+
+# Vérification de la structure
+> glimpse(superstore)
+
+# Vérification des dates
+> summary(superstore$`Order Date`)
+
+superstore <- superstore %>%
++     mutate(`Row ID` = as.character(`Row ID`))
+> # Vérifier le type de la colonne
+> class(superstore$`Row ID`)
+
+> superstore <- superstore %>%
++     mutate(across(c(Order_Day, Order_Month, Order_Year), as.character))
+> # Alternative
+> str(superstore[c("Order_Day", "Order_Month", "Order_Year")])
+
+> glimpse(superstore)
+
+# Pour les variables numériques clés
+> boxplot(superstore$Sales, main = "Boxplot des Ventes")
+> boxplot(superstore$Profit, main = "Boxplot des Profits")
+> 
+> # Fonction pour identifier les outliers
+> identify_outliers <- function(x) {
++     Q1 <- quantile(x, 0.25)
++     Q3 <- quantile(x, 0.75)
++     IQR <- Q3 - Q1
++     which(x < (Q1 - 1.5*IQR) | x > (Q3 + 1.5*IQR))
++ }
+> 
+> outliers_sales <- identify_outliers(superstore$Sales)
+> # Compter les doublons complets
+> sum(duplicated(superstore))
+
+
+ # Vérifier les doublons sur les commandes
+> superstore %>% 
++     count(`Order ID`) %>% 
++     filter(n > 1) %>% 
++     arrange(desc(n))
+
+> # Uniformiser la casse
+
+ # Effacer tous les graphiques
+> graphics.off()
+> 
+> # Puis rafraîchir le panneau Plots
+> plot.new()
+> library(dplyr)
+> library(stringr)
+> 
+> # 1. Corriger l'encodage d'abord
+> superstore <- superstore %>%
++     mutate(across(where(is.character), ~iconv(., to = "UTF-8")))
+> 
+> # 2. Appliquer str_trim après avoir nettoyé l'encodage
+> superstore <- superstore %>%
++     mutate(across(where(is.character), str_trim))
+> 
+> # 3. Alternative plus robuste
+> superstore <- superstore %>%
++     mutate(across(where(is.character), 
++                   ~str_trim(iconv(., to = "UTF-8", sub = " "))))
+> # Uniformiser la casse
+> superstore <- superstore %>%
++     mutate(across(where(is.character), str_to_upper))
+> 
+> # Supprimer les espaces superflus
+> superstore <- superstore %>%
++     mutate(across(where(is.character), str_trim))
+> # Aperçu des données nettoyées
+
+> glimpse(superstore)
+
+> # Statistiques descriptives
+> summarytools::descr(superstore)
+
+> # Création d'une colonne "Margin" calculée comme la marge bénéficiaire en pourcentage
+> superstore$Margin <- with(superstore, ifelse(Sales != 0, Profit / Sales * 100, NA))
+
+> # Aperçu des données nettoyées
+> glimpse(superstore)
+
+# statisque de base 
+> summary(superstore$Sales)  # Résumé des ventes
+
+> summary(superstore$Profit) # Résumé des profits
+
+> summary(superstore$Margin)  # Résumé des Marges
+
+> superstore %>%
++     group_by(Category) %>%
++     summarise(
++         Total_Sales = sum(Sales),
++         Total_Profit = sum(Profit),  # Ajouté pour clarté
++         Avg_Profit = mean(Profit),
++         Total_Margin = sum(Margin)  # Marge globale par catégorie
++     ) 
+
+superstore %>%
++     group_by(Category) %>%
++     summarise(
++         Total_Sales = sum(Sales),
++         Total_Profit = sum(Profit),  # Ajouté pour clarté
++         Avg_Profit = mean(Profit),
++         Total_Margin = sum(Margin)  # Marge globale par catégorie
++     ) %>% mutate(Margin_Pct = scales::percent(Margin))  # Format en pourcentage (optionnel)
+
+> superstore %>%
++     group_by(Category, SubCategory) %>%
++     summarise(Margin = sum(Profit) / sum(Sales))
+
+> superstore %>%
++     group_by(Category, SubCategory) %>%
++     summarise( Total_Sales = sum(Sales),
++     Total_Profit = sum(Profit),  # Ajouté pour clarté
++     Avg_Profit = mean(Profit), Margin = sum(Profit) / sum(Sales)) %>%
++     mutate(Margin_Pct = scales::percent(Margin))  # Format en pourcentage (optionnel)
+
+> # Analyse exploratoire (statistiques descriptives)
+> ggplot(superstore, aes(x = Category, y = Profit)) + geom_boxplot()
+> # Analyse des relations quali-quanti
+> # Objectif : Étudier l'impact des catégories (qualitatif) sur les ventes/profits (quantitatif).
+> # ANOVA pour comparer les profits par catégorie :
+> aov_result <- aov(Profit ~ Category, data = superstore)
+> summary(aov_result)
+
+> aov_result2 <- aov(Margin ~ Category, data = superstore)
+> summary(aov_result2)
+
+> aov_result3 <- aov(Sales ~ Category, data = superstore)
+> summary(aov_result3)
+
+> aov_result4 <- aov(Profit ~ SubCategory, data = superstore)
+> summary(aov_result4)
+
+> aov_result5 <- aov(Margin ~ SubCategory, data = superstore)
+> summary(aov_result5)
+
+> aov_result6 <- aov(Sales ~ SubCategory, data = superstore)
+> summary(aov_result6)
+
+> # Visualisation :
+> ggplot(superstore, aes(x = Category, y = Profit, fill = Category)) + 
++     geom_bar(stat = "summary", fun = "mean")
+> ggplot(superstore, aes(x = Category, y = Margin, fill = Category)) + 
++     geom_bar(stat = "summary", fun = "mean")
+> ggplot(superstore, aes(x = Category, y = Sales, fill = Category)) + 
++     geom_bar(stat = "summary", fun = "mean")
+> ggplot(superstore, aes(x = Category, y = Sales, fill = SubCategory)) + 
++     geom_bar(stat = "summary", fun = "mean")
+> ggplot(superstore, aes(x = Category, y = Margin, fill = SubCategory)) + 
++     geom_bar(stat = "summary", fun = "mean")
+> ggplot(superstore, aes(x = Category, y = Profit, fill = SubCategory)) + 
++     geom_bar(stat = "summary", fun = "mean")
+> # Analyse des relations quanti-quanti
+> # Objectif : Étudier la corrélation entre variables quantitatives (ex : Sales vs. Profit).
+> # Matrice de corrélation :
+> cor(superstore[, c("Sales", "Profit", "Quantity")])
+
+
+> cor(superstore[, c("Sales", "Profit", "Margin")])
+
+> # Nuage de points :
+> ggplot(superstore, aes(x = Sales, y = Profit)) + geom_point() + geom_smooth()
+
+ # Analyse temporelle
+> # Objectif : Étudier l'évolution des ventes/profits dans le temps.
+> 
+> superstore_monthly <- superstore %>%
++     mutate(Month = format(`Order Date`, "%Y-%m")) %>%
++     group_by(Month) %>%
++     summarise(Total_Sales = sum(Sales))
+> View(superstore_monthly)
+> View(superstore)
+> View(superstore_monthly)
+> superstore_year <- superstore %>%
++     mutate(Year = format(`Order Date`, "%Y")) %>%
++     group_by(Year) %>%
++     summarise(Total_Sales = sum(Sales))
+> View(superstore_year)
+> superstore_year_Profit <- superstore %>%
++     mutate(Year = format(`Order Date`, "%Y")) %>%
++     group_by(Year) %>%
++     summarise(Total_Profit = sum(Profit))
+> View(superstore_year_Profit)
+> superstore_year_Margin <- superstore %>%
++     mutate(Year = format(`Order Date`, "%Y")) %>%
++     group_by(Year) %>%
++     summarise(Total_Margin = sum(Margin))
+> superstore_monthly_Profit <- superstore %>%
++     mutate(Month = format(`Order Date`, "%Y-%m")) %>%
++     group_by(Month) %>%
++     summarise(Total_Profit = sum(Profit))
+> superstore_monthly_Margin <- superstore %>%
++     mutate(Month = format(`Order Date`, "%Y-%m")) %>%
++     group_by(Month) %>%
++     summarise(Total_Margin = sum(Margin))
+> View(superstore_monthly)
+> View(superstore_monthly_Margin)
+> View(superstore_monthly_Profit)
+> View(superstore_year)
+> View(superstore_year_Margin)
+> View(superstore_year_Profit)
+> ggplot(superstore_monthly, aes(x = Month, y = Total_Sales, group = 1)) + 
++     geom_line() +
++     theme(axis.text.x = element_text(angle = 90))
+> ggplot(superstore_year, aes(x = year, y = Total_Sales, group = 1)) + 
++     geom_line() +
++     theme(axis.text.x = element_text(angle = 90))
+
+ggplot(superstore_monthly, aes(x = Month, y = Total_Sales, group = 1)) + 
++     geom_line() +
++     theme(axis.text.x = element_text(angle = 90))
+> ggplot(superstore_year, aes(x = Year, y = Total_Sales, group = 1)) + 
++     geom_line() +
++     theme(axis.text.x = element_text(angle = 90))
+> ggplot(superstore_year_Margin, aes(x = Year, y = Total_Margin, group = 1)) + 
++     geom_line() +
++     theme(axis.text.x = element_text(angle = 90))
+> ggplot(superstore_year_Profit, aes(x = Year, y = Total_Profit, group = 1)) + 
++     geom_line() +
++     theme(axis.text.x = element_text(angle = 90))
+> superstore %>%
++     group_by(Category) %>%
++     summarise(Total_Sales = sum(Sales), Total_Profit = sum(Profit)) %>%
++     pivot_longer(cols = c(Total_Sales, Total_Profit), names_to = "Type", values_to = "Montant") %>%
++     ggplot(aes(x = Category, y = Montant, fill = Type)) +
++     geom_col(position = "dodge") +
++     labs(title = "Ventes et Profits par Catégorie", y = "Montant ($)", x = "Catégorie") +
++     scale_fill_manual(values = c("steelblue", "darkorange"), labels = c("Ventes", "Profits")) +
++     theme_minimal()
+> 
+> superstore %>%
++     group_by(Region) %>%
++     summarise(Total_Sales = sum(Sales), Avg_Profit_Margin = mean(Profit / Sales, na.rm=TRUE)) %>%
++     ggplot(aes(x = reorder(Region, Total_Sales), y = Total_Sales)) +
++     geom_bar(stat = "identity", fill = "forestgreen") +
++     geom_text(aes(label = scales::dollar(Total_Sales)), vjust = -0.5) +
++     labs(title = "Ventes Totales par Région", x = "Région", y = "Ventes Totales") +
++     theme_minimal()
+> 
+> superstore %>%
++     mutate(Discount_Bin = cut(Discount, breaks = c(-0.01, 0.1, 0.2, 1), labels = c("0-10%", "10-20%", ">20%"))) %>%
++     group_by(Discount_Bin) %>%
++     summarise(Avg_Profit_Margin = mean(Profit / Sales, na.rm=TRUE)) %>%
++     ggplot(aes(x = Discount_Bin, y = Avg_Profit_Margin, fill = Discount_Bin)) +
++     geom_col() +
++     scale_y_continuous(labels = scales::percent_format(accuracy=1)) +
++     labs(title = "Impact des Remises sur la Marge Moyenne", x = "Tranche de Remise", y = "Marge Moyenne") +
++     theme_minimal() +
++     theme(legend.position = "none")
+> 
+> superstore %>%
++     mutate(Month = floor_date(`Order Date`, "month")) %>%
++     group_by(Month) %>%
++     summarise(Total_Sales = sum(Sales)) %>%
++     ggplot(aes(x = Month, y = Total_Sales)) +
++     geom_line(color = "dodgerblue", size = 1) +
++     geom_point(color = "dodgerblue") +
++     labs(title = "Évolution Mensuelle des Ventes", x = "Mois", y = "Ventes Totales ($)") +
++     theme_minimal() +
++     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+> superstore %>%
++     group_by(Segment) %>%
++     summarise(Total_Sales = sum(Sales)) %>%
++     ggplot(aes(x = "", y = Total_Sales, fill = Segment)) +
++     geom_col() +
++     coord_polar(theta = "y") +
++     labs(title = "Répartition des Ventes par Segment Client", x = NULL, y = NULL) +
++     theme_void() +
++     scale_fill_brewer(palette = "Set2")

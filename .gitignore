@@ -1,0 +1,48 @@
+
+# History files
+.Rhistory
+.RData
+.Rproj.user
+.DS_Store
+
+# Données sensibles ou volumineuses
+*.csv
+*.xlsx
+*.rds
+*.RData
+
+# RStudio files
+.Rproj.user/
+.Rproj.user
+*.Rproj
+
+# Example CSV or output data
+*.csv
+*.tsv
+*.xlsx
+
+# Figures and caches
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.svg
+*.html
+
+# Cache and logs
+.Rcache/
+.Rcheck/
+*.log
+*_cache/
+*.utf8.md
+*.knit.md
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# User-specific files
+*.swp
+
+# Autres
+.Rproj

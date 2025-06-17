@@ -1,0 +1,43 @@
+# Normalisation des fins de ligne (LF pour tous les fichiers texte)
+* text=auto
+
+# Fichiers R et Rmd avec fins de ligne LF
+*.R     text eol=lf
+*.Rmd   text eol=lf
+*.r     text eol=lf
+
+# Markdown et autres fichiers texte
+*.md    text eol=lf
+*.txt   text eol=lf
+*.csv   text eol=lf
+*.tsv   text eol=lf
+*.json  text eol=lf
+*.xml   text eol=lf
+
+# Fichiers LaTeX
+*.tex   text eol=lf
+
+# Script bash
+*.sh    text eol=lf
+
+# Fichiers Windows batch
+*.bat   text eol=crlf
+
+# Fichiers binaires (ne pas les modifier)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.pdf   binary
+*.zip   binary
+*.gz    binary
+*.tar   binary
+*.rds   binary
+*.RData binary
+
+# Fichiers spécifiques à RStudio
+*.Rproj user merge=union
+
+*.R text eol=lf
+*.Rmd text eol=lf
+*.md text eol=lf
